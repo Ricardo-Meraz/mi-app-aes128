@@ -127,7 +127,7 @@ const RegisterForm = () => {
 
         <p className="text-center mt-3 mb-0" style={{ color: "#555" }}>
           ¿Ya tienes cuenta?{" "}
-          <a href="/login" className="text-primary fw-semibold">
+          <a href="/" className="text-primary fw-semibold">
             Inicia sesión
           </a>
         </p>
