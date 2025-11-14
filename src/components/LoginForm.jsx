@@ -18,23 +18,25 @@ const LoginForm = () => {
       // 🔐 Cifrar la contraseña igual que en el registro
       const clave = CryptoJS.enc.Utf8.parse("1234567890123456");
       const iv = CryptoJS.enc.Utf8.parse("1234567890123456");
+
       const encrypted = CryptoJS.AES.encrypt(password, clave, {
         iv: iv,
         mode: CryptoJS.mode.CBC,
         padding: CryptoJS.pad.Pkcs7,
       }).toString();
 
-      // Enviar al backend
+      // 📤 Enviar al backend usando tu nueva API
       const response = await axios.post(
-        "https://servidor-psi-two.vercel.app/usuarios/login",
+        "https://servidor-psi-two.vercel.app/usuario-base/login",
         {
           email,
-          password: encrypted,
+          contraseña: encrypted, // 👈 IMPORTANTE
         }
       );
 
       setMensaje(response.data.mensaje || "✅ Inicio de sesión exitoso.");
-      localStorage.setItem("token", response.data.token);
+
+      // Guardar datos si quieres
       localStorage.setItem("usuario", JSON.stringify(response.data.usuario));
 
       setEmail("");
@@ -42,7 +44,8 @@ const LoginForm = () => {
     } catch (error) {
       console.error("❌ Error en login:", error);
       setMensaje(
-        error.response?.data?.mensaje || "❌ Error al iniciar sesión. Verifica tus datos."
+        error.response?.data?.mensaje ||
+          "❌ Error al iniciar sesión. Verifica tus datos."
       );
     } finally {
       setLoading(false);

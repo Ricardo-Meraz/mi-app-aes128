@@ -19,24 +19,24 @@ const RegisterForm = () => {
       // 🔐 Cifrado AES-128
       const clave = CryptoJS.enc.Utf8.parse("1234567890123456");
       const iv = CryptoJS.enc.Utf8.parse("1234567890123456");
+
       const encrypted = CryptoJS.AES.encrypt(password, clave, {
         iv: iv,
         mode: CryptoJS.mode.CBC,
         padding: CryptoJS.pad.Pkcs7,
       }).toString();
 
-      // 📤 Enviar datos al servidor
+      // 📤 Enviar datos al servidor usando tus nuevas rutas
       const response = await axios.post(
-        "https://servidor-psi-two.vercel.app/usuarios/registro",
+        "https://servidor-psi-two.vercel.app/usuario-base/registro",
         {
           nombre,
           email,
-          password: encrypted,
+          contraseña: encrypted, // 👈 IMPORTANTE: debes mandar "contraseña"
         }
       );
 
-      // ✅ Mensaje personalizado de éxito
-      setMensaje("✅ Usuario registrado correctamente. Contraseña cifrada con AES-128.");
+      setMensaje("✅ Usuario registrado correctamente.");
       setNombre("");
       setEmail("");
       setPassword("");
