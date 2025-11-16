@@ -1,46 +1,53 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
-export default function ForgotPassword() {
+const ForgotPassword = () => {
   const [email, setEmail] = useState("");
   const [mensaje, setMensaje] = useState("");
+  const navigate = useNavigate();
 
-  const recuperar = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setMensaje("");
 
     try {
-      await axios.post("https://servidor-psi-two.vercel.app/usuario-base/recuperar", {
-        email
-      });
+      await axios.post(
+        "https://servidor-psi-two.vercel.app/usuario-base/recuperar",
+        { email }
+      );
 
-      localStorage.setItem("emailReset", email);
+      // ✔ Guardar email temporal
+      localStorage.setItem("emailRecuperacion", email);
 
-      setMensaje("Código enviado. Revisa tu correo.");
-      window.location.href = "/verify-otp";
-
+      navigate("/verify");
     } catch (error) {
-      setMensaje("Error al enviar el código");
+      setMensaje("Error enviando el código. Verifica tu correo.");
     }
   };
 
   return (
-    <div className="container mt-5">
-      <h2>Recuperar contraseña</h2>
+    <div className="d-flex justify-content-center align-items-center vh-100 bg-light">
+      <div className="card p-4 shadow" style={{ width: "350px" }}>
+        <h3 className="text-center mb-3">Recuperar contraseña</h3>
 
-      <form onSubmit={recuperar}>
-        <input
-          type="email"
-          className="form-control mb-3"
-          placeholder="Correo registrado"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
+        <form onSubmit={handleSubmit}>
+          <input
+            type="email"
+            className="form-control mb-3"
+            placeholder="Correo registrado"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
 
-        <button className="btn btn-primary w-100">Enviar código</button>
-      </form>
+          <button className="btn btn-primary w-100">Enviar código</button>
+        </form>
 
-      {mensaje && <p className="mt-3">{mensaje}</p>}
+        {mensaje && <p className="mt-3 text-danger text-center">{mensaje}</p>}
+      </div>
     </div>
   );
-}
+};
+
+export default ForgotPassword;

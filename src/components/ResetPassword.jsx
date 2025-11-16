@@ -1,50 +1,87 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import axios from "axios";
+import CryptoJS from "crypto-js";
+import { useNavigate } from "react-router-dom";
 
-export default function ResetPassword() {
-  const [password, setPassword] = useState("");
+const ResetPassword = () => {
+  const [pass, setPass] = useState("");
+  const [confirm, setConfirm] = useState("");
   const [mensaje, setMensaje] = useState("");
+  const navigate = useNavigate();
 
-  const cambiar = async (e) => {
+  const handleReset = async (e) => {
     e.preventDefault();
+    setMensaje("");
 
-    const email = localStorage.getItem("emailReset");
+    if (pass !== confirm) {
+      return setMensaje("Las contraseñas no coinciden.");
+    }
+
+    const email = localStorage.getItem("emailRecuperacion");
+    const codigo = localStorage.getItem("codigoRecuperacion");
+
+    if (!email || !codigo) return setMensaje("Error interno.");
+
+    // 🔐 AES 128
+    const clave = CryptoJS.enc.Utf8.parse("1234567890123456");
+    const iv = CryptoJS.enc.Utf8.parse("1234567890123456");
+    const encrypted = CryptoJS.AES.encrypt(pass, clave, {
+      iv,
+      mode: CryptoJS.mode.CBC,
+      padding: CryptoJS.pad.Pkcs7,
+    }).toString();
 
     try {
-      await axios.post("https://servidor-psi-two.vercel.app/usuario-base/restablecer-otp", {
-        email,
-        nuevaContraseña: password
-      });
+      await axios.post(
+        "https://servidor-psi-two.vercel.app/usuario-base/verificar-otp",
+        {
+          email,
+          codigo,
+          nuevaContraseña: encrypted, // ← se manda cifrada
+        }
+      );
 
-      setMensaje("Contraseña cambiada correctamente.");
-      localStorage.removeItem("emailReset");
+      // Limpiar temporales
+      localStorage.removeItem("emailRecuperacion");
+      localStorage.removeItem("codigoRecuperacion");
 
-      setTimeout(() => {
-        window.location.href = "/";
-      }, 2000);
-
+      navigate("/");
     } catch (error) {
-      setMensaje("Error al actualizar la contraseña");
+      setMensaje("Error actualizando la contraseña.");
     }
   };
 
   return (
-    <div className="container mt-5">
-      <h2>Nueva contraseña</h2>
+    <div className="d-flex justify-content-center align-items-center vh-100 bg-light">
+      <div className="card p-4 shadow" style={{ width: "350px" }}>
+        <h3 className="text-center mb-3">Nueva contraseña</h3>
 
-      <form onSubmit={cambiar}>
-        <input
-          type="password"
-          className="form-control mb-3"
-          placeholder="Nueva contraseña"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
+        <form onSubmit={handleReset}>
+          <input
+            type="password"
+            className="form-control mb-3"
+            placeholder="Nueva contraseña"
+            value={pass}
+            onChange={(e) => setPass(e.target.value)}
+            required
+          />
 
-        <button className="btn btn-success w-100">Actualizar</button>
-      </form>
+          <input
+            type="password"
+            className="form-control mb-3"
+            placeholder="Confirmar contraseña"
+            value={confirm}
+            onChange={(e) => setConfirm(e.target.value)}
+            required
+          />
 
-      {mensaje && <p className="mt-3">{mensaje}</p>}
+          <button className="btn btn-primary w-100">Actualizar</button>
+        </form>
+
+        {mensaje && <p className="mt-3 text-danger text-center">{mensaje}</p>}
+      </div>
     </div>
   );
-}
+};
+
+export default ResetPassword;
