@@ -1,63 +1,44 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
 
-const VerifyOTP = () => {
+export default function VerifyOTP() {
   const [codigo, setCodigo] = useState("");
   const [mensaje, setMensaje] = useState("");
-  const navigate = useNavigate();
 
-  const email = localStorage.getItem("email_recuperacion");
-
-  const onSubmit = async (e) => {
+  const verificar = async (e) => {
     e.preventDefault();
-    setMensaje("");
+    const email = localStorage.getItem("emailReset");
 
     try {
-      const response = await axios.post(
-        "https://servidor-psi-two.vercel.app/usuario-base/verificar-otp",
-        { email, codigo }
-      );
+      await axios.post("https://servidor-psi-two.vercel.app/usuario-base/verificar-otp", {
+        email,
+        codigo
+      });
 
-      if (response.data.mensaje) {
-        // 🔥 SI EL CÓDIGO ES CORRECTO → IR A /reset
-        navigate("/reset");
-      }
+      window.location.href = "/reset-password";
 
     } catch (error) {
-      setMensaje(
-        error.response?.data?.mensaje || "Código incorrecto. Intenta otra vez."
-      );
+      setMensaje("Código incorrecto o expirado.");
     }
   };
 
   return (
-    <div className="d-flex justify-content-center align-items-center vh-100">
-      <div className="card p-4" style={{ width: "380px" }}>
-        <h3 className="text-center mb-3">Verificar código</h3>
+    <div className="container mt-5">
+      <h2>Verificar código</h2>
 
-        <form onSubmit={onSubmit}>
-          <div className="mb-3">
-            <label>Código recibido</label>
-            <input
-              type="text"
-              className="form-control"
-              placeholder="123456"
-              value={codigo}
-              onChange={(e) => setCodigo(e.target.value)}
-              required
-            />
-          </div>
+      <form onSubmit={verificar}>
+        <input
+          type="text"
+          className="form-control mb-3"
+          placeholder="Código recibido"
+          value={codigo}
+          onChange={(e) => setCodigo(e.target.value)}
+        />
 
-          <button className="btn btn-primary w-100">Verificar</button>
-        </form>
+        <button className="btn btn-primary w-100">Verificar</button>
+      </form>
 
-        {mensaje && (
-          <div className="alert alert-danger text-center mt-3">{mensaje}</div>
-        )}
-      </div>
+      {mensaje && <p className="mt-3 text-danger">{mensaje}</p>}
     </div>
   );
-};
-
-export default VerifyOTP;
+}

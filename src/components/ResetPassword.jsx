@@ -1,39 +1,50 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import axios from "axios";
 
 export default function ResetPassword() {
   const [password, setPassword] = useState("");
   const [mensaje, setMensaje] = useState("");
 
-  const cambiar = async () => {
-    const email = localStorage.getItem("emailRecuperacion");
-    const codigo = localStorage.getItem("codigoOTP");
+  const cambiar = async (e) => {
+    e.preventDefault();
+
+    const email = localStorage.getItem("emailReset");
 
     try {
-      await axios.post("https://servidor-psi-two.vercel.app/usuario-base/verificar-otp", {
+      await axios.post("https://servidor-psi-two.vercel.app/usuario-base/restablecer-otp", {
         email,
-        codigo,
         nuevaContraseña: password
       });
 
-      setMensaje("Contraseña actualizada correctamente");
+      setMensaje("Contraseña cambiada correctamente.");
+      localStorage.removeItem("emailReset");
 
-    } catch (e) {
-      setMensaje("Error al actualizar contraseña");
+      setTimeout(() => {
+        window.location.href = "/";
+      }, 2000);
+
+    } catch (error) {
+      setMensaje("Error al actualizar la contraseña");
     }
   };
 
   return (
-    <div>
+    <div className="container mt-5">
       <h2>Nueva contraseña</h2>
-      <input 
-        type="password"
-        placeholder="Nueva contraseña"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-      />
-      <button onClick={cambiar}>Cambiar</button>
-      <p>{mensaje}</p>
+
+      <form onSubmit={cambiar}>
+        <input
+          type="password"
+          className="form-control mb-3"
+          placeholder="Nueva contraseña"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
+
+        <button className="btn btn-success w-100">Actualizar</button>
+      </form>
+
+      {mensaje && <p className="mt-3">{mensaje}</p>}
     </div>
   );
 }
