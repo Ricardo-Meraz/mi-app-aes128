@@ -1,26 +1,20 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import RegisterForm from "./components/RegisterForm";
 import LoginForm from "./components/LoginForm";
-
-// 🔵 Importar los nuevos componentes
+import RegisterForm from "./components/RegisterForm";
 import ForgotPassword from "./components/ForgotPassword";
+import VerifyOTP from "./components/VerifyOTP";
 import ResetPassword from "./components/ResetPassword";
 
 function App() {
   return (
     <Router>
       <Routes>
-        {/* Login */}
         <Route path="/" element={<LoginForm />} />
-
-        {/* Registro */}
         <Route path="/register" element={<RegisterForm />} />
 
-        {/* Recuperar contraseña */}
-        <Route path="/forgot-password" element={<ForgotPassword />} />
-
-        {/* Restablecer contraseña */}
-        <Route path="/reset-password/:token" element={<ResetPassword />} />
+        <Route path="/forgot" element={<ForgotPassword />} />
+        <Route path="/verify" element={<VerifyOTP />} />
+        <Route path="/reset" element={<ResetPassword />} />
       </Routes>
     </Router>
   );
