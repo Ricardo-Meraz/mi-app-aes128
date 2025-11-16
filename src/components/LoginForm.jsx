@@ -25,18 +25,16 @@ const LoginForm = () => {
         padding: CryptoJS.pad.Pkcs7,
       }).toString();
 
-      // 📤 Enviar al backend usando tu nueva API
+      // 📤 Enviar al backend
       const response = await axios.post(
         "https://servidor-psi-two.vercel.app/usuario-base/login",
         {
           email,
-          contraseña: encrypted, // 👈 IMPORTANTE
+          contraseña: encrypted,
         }
       );
 
       setMensaje(response.data.mensaje || "✅ Inicio de sesión exitoso.");
-
-      // Guardar datos si quieres
       localStorage.setItem("usuario", JSON.stringify(response.data.usuario));
 
       setEmail("");
@@ -75,7 +73,7 @@ const LoginForm = () => {
             />
           </div>
 
-          <div className="mb-4">
+          <div className="mb-2">
             <label className="form-label fw-semibold">Contraseña</label>
             <input
               type="password"
@@ -86,6 +84,13 @@ const LoginForm = () => {
               required
             />
           </div>
+
+          {/* 🔵 Enlace para recuperar contraseña */}
+          <p className="text-end mb-3">
+            <a href="/forgot-password" className="text-primary fw-semibold" style={{ fontSize: "0.9rem" }}>
+              ¿Olvidaste tu contraseña?
+            </a>
+          </p>
 
           <button
             type="submit"
