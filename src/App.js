@@ -11,7 +11,6 @@ function App() {
       <Routes>
         <Route path="/" element={<LoginForm />} />
         <Route path="/register" element={<RegisterForm />} />
-
         <Route path="/forgot" element={<ForgotPassword />} />
         <Route path="/verify" element={<VerifyOTP />} />
         <Route path="/reset" element={<ResetPassword />} />

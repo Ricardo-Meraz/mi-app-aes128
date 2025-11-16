@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";
 import CryptoJS from "crypto-js";
+import { Link } from "react-router-dom";   // 👈 IMPORTANTE
 
 const LoginForm = () => {
   const [email, setEmail] = useState("");
@@ -25,7 +26,6 @@ const LoginForm = () => {
         padding: CryptoJS.pad.Pkcs7,
       }).toString();
 
-      // 📤 Enviar al backend
       const response = await axios.post(
         "https://servidor-psi-two.vercel.app/usuario-base/login",
         {
@@ -55,14 +55,19 @@ const LoginForm = () => {
       className="d-flex justify-content-center align-items-center vh-100 bg-light"
       style={{ background: "linear-gradient(135deg, #6610f2, #007bff)" }}
     >
-      <div className="card shadow-lg p-4" style={{ width: "400px", borderRadius: "15px" }}>
+      <div
+        className="card shadow-lg p-4"
+        style={{ width: "400px", borderRadius: "15px" }}
+      >
         <h2 className="text-center mb-4" style={{ color: "#333" }}>
           Iniciar sesión
         </h2>
 
         <form onSubmit={handleLogin}>
           <div className="mb-3">
-            <label className="form-label fw-semibold">Correo electrónico</label>
+            <label className="form-label fw-semibold">
+              Correo electrónico
+            </label>
             <input
               type="email"
               className="form-control"
@@ -85,12 +90,12 @@ const LoginForm = () => {
             />
           </div>
 
-          {/* 🔵 Enlace para recuperar contraseña */}
-          <p className="text-end mb-3">
-            <a href="/forgot-password" className="text-primary fw-semibold" style={{ fontSize: "0.9rem" }}>
+          {/* 🔗 Enlace de "Olvidaste tu contraseña?" */}
+          <div className="text-end mb-3">
+            <Link to="/forgot" className="text-primary small fw-semibold">
               ¿Olvidaste tu contraseña?
-            </a>
-          </p>
+            </Link>
+          </div>
 
           <button
             type="submit"
@@ -119,9 +124,9 @@ const LoginForm = () => {
 
         <p className="text-center mt-3 mb-0" style={{ color: "#555" }}>
           ¿No tienes cuenta?{" "}
-          <a href="/register" className="text-primary fw-semibold">
+          <Link to="/register" className="text-primary fw-semibold">
             Regístrate
-          </a>
+          </Link>
         </p>
       </div>
     </div>
